@@ -9,3 +9,9 @@
 /gradle
 /captures
 .externalNativeBuild
+settings.gradle
+local.properties
+gradlew.bat
+gradlew
+gradle.properties
+

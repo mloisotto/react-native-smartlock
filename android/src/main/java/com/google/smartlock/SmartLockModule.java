@@ -65,6 +65,10 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
 
             if (resultCode == SUCCESS_CODE) {
                 Credential credential = intent.getParcelableExtra(Credential.EXTRA_KEY);
+                if (credential == null) {
+                    return;
+                }
+
                 String accountType = credential.getAccountType();
                 if (requestCode == RC_READ) {
                     handleSuccess(credential);
@@ -143,6 +147,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
             String name = credential.getName();
             String id = credential.getId();
             List<IdToken> tokens = credential.getIdTokens();
+
 
             obj.put("name", name);
             obj.put("id", id);

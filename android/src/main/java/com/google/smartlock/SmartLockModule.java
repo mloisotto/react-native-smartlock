@@ -114,7 +114,10 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                             // resolve the read request.
                             ResolvableApiException rae = (ResolvableApiException) e;
                             Activity activity = getCurrentActivity();
-
+                            if (activity == null) {
+                                sLPromise.reject("Activity is null", "Activity is null");
+                                return;
+                            }
                             resolveResult(rae, RC_READ, activity);
                         } else if (e instanceof ApiException) {
                             // The user must create an account or sign in manually.

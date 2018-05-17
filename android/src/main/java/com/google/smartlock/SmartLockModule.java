@@ -40,6 +40,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
     private Promise sLPromise;
     private static final int RC_READ = 4;
     private static final int SUCCESS_CODE = -1;
+    private static final int CANCEL_CODE = 1001;
 
 
 
@@ -77,8 +78,10 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                     Toast.makeText(getCurrentActivity(), "Credential Read Failed", Toast.LENGTH_SHORT).show();
                     sLPromise.reject("Unable to login","Unable to login");
                 }
-            } else {
+            } else if (resultCode == CANCEL_CODE) {
                 sLPromise.reject("Login cancelled", "Login cancelled");
+            } else {
+                return;
             }
         }
     };

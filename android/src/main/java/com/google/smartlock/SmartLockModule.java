@@ -166,4 +166,38 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
         }
 
     }
+    
+    @ReactMethod
+    public void saveCredentials(final String name, final String password) {
+        this.sLPromise = promise;
+        CredentialsClient mCredentialsClient;
+        mCredentialsClient = Credentials.getClient(this.mContext);
+        Credential credential = new Credential.Builder(name)
+                    .setPassword(password)
+                    .build();
+        Auth.CredentialsApi.save(mCredentialsClient,
+                credential).setResultCallback(new ResultCallback() {
+            @Override
+            public void onResult(Status status) {
+                if (status.isSuccess()) {
+                    Log.d(TAG, "Credential saved");
+                    sLPromise.resolve("Credential saved");
+                } else {
+                if (status.hasResolution()) {
+                    // Try to resolve the save request. This will prompt the user if
+                    // the credential is new.
+                    try {
+                        status.startResolutionForResult(this, RC_SAVE);
+                        sLPromise.resolve("Credential saved");
+                    } catch (IntentSender.SendIntentException e) {
+                        Log.e("SmartLockModule", "Unsuccessful credential save resolution.", e); 
+                        sLPromise.reject("Unsuccessful credential save resolution.", "Unsuccessful credential save resolution.");
+                    }
+                }else{
+                        Log.d("SmartLockModule", "Unsuccessful credential save.");      
+                        sLPromise.reject("Unsuccessful credential save.", "Unsuccessful credential save.");
+                }
+            }
+        });
+    }
 }

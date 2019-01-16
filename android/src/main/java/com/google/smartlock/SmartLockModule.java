@@ -177,7 +177,6 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
         mCredentialsClient = Credentials.getClient(this.mContext);
         Credential credential = new Credential.Builder(name)
                     .setPassword(password)
-                    .setAccountTypes(IdentityProviders.GOOGLE)
                     .build();
         mCredentialsClient.save(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

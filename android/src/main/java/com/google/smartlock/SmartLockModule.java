@@ -177,7 +177,6 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
         mCredentialsClient = Credentials.getClient(this.mContext);
         Credential credential = new Credential.Builder(name)
                     .setPassword(password)
-                    .setPasswordLoginSupported(true)
                     .setAccountTypes(IdentityProviders.GOOGLE)
                     .build();
         mCredentialsClient.save(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -202,12 +201,12 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                         try {
                             rae.startResolutionForResult(activity, RC_SAVE);
                             sLPromise.resolve("Credential saved");
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.e("SmartLockModule", "Failed to send Credentials intent.", e);
+                        } catch (IntentSender.SendIntentException ex) {
+                            Log.e("SmartLockModule", "Failed to send Credentials intent.", ex);
                         sLPromise.reject("Failed to send Credentials intent.", "Failed to send Credentials intent.");
                         }
-                    } catch (IntentSender.SendIntentException e) {
-                        Log.e("SmartLockModule", "Unsuccessful credential save resolution.", e); 
+                    } catch (IntentSender.SendIntentException ex) {
+                        Log.e("SmartLockModule", "Unsuccessful credential save resolution.", ex); 
                         sLPromise.reject("Unsuccessful credential save resolution.", "Unsuccessful credential save resolution.");
                     }
                 }else{

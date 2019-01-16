@@ -27,6 +27,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.common.api.ResultCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -168,7 +169,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
     }
     
     @ReactMethod
-    public void saveCredentials(final String name, final String password) {
+    public void saveCredentials(final Promise promise, final String name, final String password) {
         this.sLPromise = promise;
         CredentialsClient mCredentialsClient;
         mCredentialsClient = Credentials.getClient(this.mContext);

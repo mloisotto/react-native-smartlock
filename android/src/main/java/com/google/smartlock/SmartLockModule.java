@@ -182,7 +182,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                 if (status.isSuccess()) {
                     Log.d(TAG, "Credential saved");
                     sLPromise.resolve("Credential saved");
-                } else {
+                } else
                 if (status.hasResolution()) {
                     // Try to resolve the save request. This will prompt the user if
                     // the credential is new.

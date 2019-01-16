@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
@@ -28,6 +29,7 @@ import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +44,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
     private static final int RC_READ = 4;
     private static final int SUCCESS_CODE = -1;
     private static final int CANCEL_CODE = 1001;
-
+    private static final int RC_SAVE = 1;
 
 
     public SmartLockModule(ReactApplicationContext reactContext, Application application) {
@@ -177,11 +179,12 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                     .setPassword(password)
                     .build();
         Auth.CredentialsApi.save(mCredentialsClient,
-                credential).setResultCallback(new ResultCallback() {
+                credential).setResultCallback(new ResultCallback<CredentialRequestResult>() {
             @Override
-            public void onResult(Status status) {
+            public void onResult(@NonNull CredentialRequestResult result) {
+                Status status = result.getStatus();
                 if (status.isSuccess()) {
-                    Log.d(TAG, "Credential saved");
+                    Log.d("SmartLockModule", "Credential saved");
                     sLPromise.resolve("Credential saved");
                 } else
                 if (status.hasResolution()) {

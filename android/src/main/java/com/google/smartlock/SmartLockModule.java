@@ -189,24 +189,19 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                 Exception e = task.getException();
                 if (e instanceof ResolvableApiException) {
                     // Try to resolve the save request. This will prompt the user if
-                    // the credential is new.
-                    try {                        
-                        ResolvableApiException rae = (ResolvableApiException) e;
-                        Activity activity = getCurrentActivity();
-                        if (activity == null) {
-                            sLPromise.reject("Activity is null", "Activity is null");
-                            return;
-                        }
-                        try {
-                            rae.startResolutionForResult(activity, RC_SAVE);
-                            sLPromise.resolve("Credential saved");
-                        } catch (IntentSender.SendIntentException ex) {
-                            Log.e("SmartLockModule", "Failed to send Credentials intent.", ex);
-                        sLPromise.reject("Failed to send Credentials intent.", "Failed to send Credentials intent.");
-                        }
+                    // the credential is new.                     
+                    ResolvableApiException rae = (ResolvableApiException) e;
+                    Activity activity = getCurrentActivity();
+                    if (activity == null) {
+                        sLPromise.reject("Activity is null", "Activity is null");
+                        return;
+                    }
+                    try {
+                        rae.startResolutionForResult(activity, RC_SAVE);
+                        sLPromise.resolve("Credential saved");
                     } catch (IntentSender.SendIntentException ex) {
-                        Log.e("SmartLockModule", "Unsuccessful credential save resolution.", ex); 
-                        sLPromise.reject("Unsuccessful credential save resolution.", "Unsuccessful credential save resolution.");
+                        Log.e("SmartLockModule", "Failed to send Credentials intent.", ex);
+                        sLPromise.reject("Failed to send Credentials intent.", "Failed to send Credentials intent.");
                     }
                 }else{
                         Log.d("SmartLockModule", "Unsuccessful credential save.");      

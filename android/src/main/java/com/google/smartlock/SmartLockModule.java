@@ -171,7 +171,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
     }
     
     @ReactMethod
-    public void saveCredentials(final Promise promise, final String name, final String password) {
+    public void saveCredentials(final String name, final String password, final Promise promise) {
         this.sLPromise = promise;
         CredentialsClient mCredentialsClient;
         mCredentialsClient = Credentials.getClient(this.mContext);

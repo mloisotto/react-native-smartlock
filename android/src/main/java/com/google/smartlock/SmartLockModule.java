@@ -155,11 +155,13 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
 
             String name = credential.getName();
             String id = credential.getId();
+            String password = credential.getPassword();
             List<IdToken> tokens = credential.getIdTokens();
 
 
             obj.put("name", name);
             obj.put("id", id);
+            obj.put("password", password);
             obj.put("tokens", tokens.toString());
 
             sLPromise.resolve(obj.toString());

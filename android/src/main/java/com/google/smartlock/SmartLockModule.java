@@ -68,6 +68,9 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
             System.out.println("----------RESULT CODE : "+resultCode+"-----------");
 
             if (resultCode == SUCCESS_CODE) {
+                if(intent == null || Credential.EXTRA_KEY == null){
+                    return;
+                }
                 Credential credential = intent.getParcelableExtra(Credential.EXTRA_KEY);
                 if (credential == null) {
                     return;

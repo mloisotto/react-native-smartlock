@@ -22,6 +22,7 @@ import com.google.android.gms.auth.api.credentials.CredentialRequest;
 import com.google.android.gms.auth.api.credentials.CredentialRequestResponse;
 import com.google.android.gms.auth.api.credentials.Credentials;
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
+import com.google.android.gms.auth.api.credentials.CredentialsOptions;
 import com.google.android.gms.auth.api.credentials.IdToken;
 import com.google.android.gms.auth.api.credentials.IdentityProviders;
 import com.google.android.gms.common.api.ApiException;
@@ -174,12 +175,14 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
         }
 
     }
-    
+
     @ReactMethod
     public void saveCredentials(final String name, final String password, final Promise promise) {
         this.sLPromise = promise;
         CredentialsClient mCredentialsClient;
-        mCredentialsClient = Credentials.getClient(this.mContext);
+        CredentialsOptions options =
+          new CredentialsOptions.Builder().forceEnableSaveDialog().build();
+        mCredentialsClient = Credentials.getClient(this.mContext, options);
         Credential credential = new Credential.Builder(name)
                     .setPassword(password)
                     .build();
@@ -194,7 +197,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                 Exception e = task.getException();
                 if (e instanceof ResolvableApiException) {
                     // Try to resolve the save request. This will prompt the user if
-                    // the credential is new.                     
+                    // the credential is new.
                     ResolvableApiException rae = (ResolvableApiException) e;
                     Activity activity = getCurrentActivity();
                     if (activity == null) {
@@ -209,8 +212,8 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
                         sLPromise.reject("Failed to send Credentials intent.", "Failed to send Credentials intent.");
                     }
                 }else{
-                        Log.d("SmartLockModule", "Unsuccessful credential save.");      
-                        sLPromise.reject("Unsuccessful credential save.", "Unsuccessful credential save.");
+                        Log.d("SmartLockModule", "Unsuccessful credential save.");
+                        sLPromise.reject("Unsuccessful credential save." + e, "Unsuccessful credential save." + e);
                 }
             }
         });

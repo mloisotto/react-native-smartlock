@@ -67,4 +67,15 @@ smartLock.getCredentials()
 
 ```
 
+```javascript
+smartLock.saveCredentials(username, JSON.stringify({'password': password}))
+  .then(() => {
+       console.warn('saved');
+  })
+  .catch(err => {
+       console.warn(err);
+  });
+
+```
+
 

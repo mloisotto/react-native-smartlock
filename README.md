@@ -42,7 +42,7 @@ So `getPackages()` should look like:
 protected List<ReactPackage> getPackages() {
     return Arrays.<ReactPackage>asList(
     new MainReactPackage(),
-    new SmartLockPackager(MainApplication.this),
+    new SmartLockPackager(),
     //.....
   );
 }

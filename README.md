@@ -33,7 +33,7 @@ Add:
 1. `import com.google.smartlock.smartlockrn.SmartLockPackager;`
 
 2.  In the `getPackages()` method register the module:
-`new SmartLockPackager(MainApplication.this)`
+`new SmartLockPackager()`
 
 So `getPackages()` should look like:
 

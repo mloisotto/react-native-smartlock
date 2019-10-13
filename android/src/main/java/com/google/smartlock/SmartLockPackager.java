@@ -17,10 +17,6 @@ public class SmartLockPackager implements ReactPackage {
 
     private Application application;
 
-    public SmartLockPackager(Application application) {
-        this.application = application;
-    }
-
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         return Arrays.<NativeModule>asList(new SmartLockModule(reactContext, this.application));

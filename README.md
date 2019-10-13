@@ -33,7 +33,7 @@ Add:
 1. `import com.google.smartlock.smartlockrn.SmartLockPackager;`
 
 2.  In the `getPackages()` method register the module:
-`new SmartLockPackager(MainApplication.this)`
+`new SmartLockPackager()`
 
 So `getPackages()` should look like:
 
@@ -42,7 +42,7 @@ So `getPackages()` should look like:
 protected List<ReactPackage> getPackages() {
     return Arrays.<ReactPackage>asList(
     new MainReactPackage(),
-    new SmartLockPackager(MainApplication.this),
+    new SmartLockPackager(),
     //.....
   );
 }
@@ -63,6 +63,17 @@ smartLock.getCredentials()
   .catch(err => {
       console.log(err);
       // user doesn't have permissions or cancelled login
+  });
+
+```
+
+```javascript
+smartLock.saveCredentials(username, JSON.stringify({'password': password}))
+  .then(() => {
+       console.warn('saved');
+  })
+  .catch(err => {
+       console.warn(err);
   });
 
 ```

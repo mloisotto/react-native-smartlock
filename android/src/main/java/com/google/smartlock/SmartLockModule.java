@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
@@ -21,12 +22,15 @@ import com.google.android.gms.auth.api.credentials.CredentialRequest;
 import com.google.android.gms.auth.api.credentials.CredentialRequestResponse;
 import com.google.android.gms.auth.api.credentials.Credentials;
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
+import com.google.android.gms.auth.api.credentials.CredentialsOptions;
 import com.google.android.gms.auth.api.credentials.IdToken;
 import com.google.android.gms.auth.api.credentials.IdentityProviders;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +45,7 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
     private static final int RC_READ = 4;
     private static final int SUCCESS_CODE = -1;
     private static final int CANCEL_CODE = 1001;
-
+    private static final int RC_SAVE = 1;
 
 
     public SmartLockModule(ReactApplicationContext reactContext, Application application) {
@@ -65,6 +69,9 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
             System.out.println("----------RESULT CODE : "+resultCode+"-----------");
 
             if (resultCode == SUCCESS_CODE) {
+                if(intent == null || Credential.EXTRA_KEY == null){
+                    return;
+                }
                 Credential credential = intent.getParcelableExtra(Credential.EXTRA_KEY);
                 if (credential == null) {
                     return;
@@ -152,11 +159,13 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
 
             String name = credential.getName();
             String id = credential.getId();
+            String password = credential.getPassword();
             List<IdToken> tokens = credential.getIdTokens();
 
 
             obj.put("name", name);
             obj.put("id", id);
+            obj.put("password", password);
             obj.put("tokens", tokens.toString());
 
             sLPromise.resolve(obj.toString());
@@ -165,5 +174,48 @@ public class SmartLockModule extends ReactContextBaseJavaModule {
             sLPromise.reject("err",e.getMessage());
         }
 
+    }
+
+    @ReactMethod
+    public void saveCredentials(final String name, final String password, final Promise promise) {
+        this.sLPromise = promise;
+        CredentialsClient mCredentialsClient;
+        CredentialsOptions options =
+          new CredentialsOptions.Builder().forceEnableSaveDialog().build();
+        mCredentialsClient = Credentials.getClient(this.mContext, options);
+        Credential credential = new Credential.Builder(name)
+                    .setPassword(password)
+                    .build();
+        mCredentialsClient.save(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d("SmartLockModule", "Credential saved");
+                    sLPromise.resolve("Credential saved");
+                    return;
+                }
+                Exception e = task.getException();
+                if (e instanceof ResolvableApiException) {
+                    // Try to resolve the save request. This will prompt the user if
+                    // the credential is new.
+                    ResolvableApiException rae = (ResolvableApiException) e;
+                    Activity activity = getCurrentActivity();
+                    if (activity == null) {
+                        sLPromise.reject("Activity is null", "Activity is null");
+                        return;
+                    }
+                    try {
+                        rae.startResolutionForResult(activity, RC_SAVE);
+                        sLPromise.resolve("Credential saved");
+                    } catch (IntentSender.SendIntentException ex) {
+                        Log.e("SmartLockModule", "Failed to send Credentials intent.", ex);
+                        sLPromise.reject("Failed to send Credentials intent.", "Failed to send Credentials intent.");
+                    }
+                }else{
+                        Log.d("SmartLockModule", "Unsuccessful credential save.");
+                        sLPromise.reject("Unsuccessful credential save." + e, "Unsuccessful credential save." + e);
+                }
+            }
+        });
     }
 }
